@@ -1,9 +1,17 @@
 version: "3.9"
 services:
   frontend:
-    build: ./frontend
+    image: node:20-alpine
+    working_dir: /app
+    # build: ./frontend
+    command: npm run dev
+    volumes:
+      - ./frontend:/app  # Python needs source files
     ports:
       - "3000:3000"
+    environment:
+    - NODE_ENV=development
+    - NEXT_PUBLIC_API_URL=http://api:8000
     depends_on:
       - api
     networks: [vidnet]
@@ -11,20 +19,25 @@ services:
   api:
     build: ./python-api
     env_file: .env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8000:8000"
     volumes:
-      - ./python-api:/usr/src/app
+      - ./python-api:/usr/src/app  # Python needs source files
     depends_on:
       - redis
       - db
     networks: [vidnet]
 
   worker:
-    build: ./go-worker
+    build:
+      context: ./go-worker
+      dockerfile: Dockerfile.dev
     env_file: .env
     volumes:
-      - ./go-worker:/app
+    - ./go-worker:/app
+    command: go run main.go
+    # Remove the volumes line - Go binary is self-contained!
     depends_on:
       - redis
       - db
@@ -51,9 +64,9 @@ services:
     ports:
       - "80:80"
     volumes:
-          - ./:/var/www
-          - ./docker/config/nginx/conf.d.local/:/etc/nginx/conf.d/
-          - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
+      - ./:/var/www
+      - ./docker/config/nginx/conf.d.local/:/etc/nginx/conf.d/
+      - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
     depends_on:
       - frontend
     networks: [vidnet]

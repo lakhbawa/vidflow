@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 # ---------- System Dependencies ----------
 # Install ffmpeg (if this container also handles uploads or local validation)
 RUN apt-get update && \
-    apt-get install -y ffmpeg gcc && \
+    apt-get install -y gcc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
