@@ -6,9 +6,9 @@
     - Video Resolution Resize (Mp4)
 
 ## Tech Stack:
-- **Typescript + NextJs + React + JavaScript**: For User friendly UI
 - **Python + FastAPI**: API for handling the requests and responses
 - **Go + Gin**: Efficient handling of CPU intensive Video Conversion jobs
+- **Typescript + NextJs + React + JavaScript**: For User friendly UI
 - **PostGres** - Database used for persisting conversion jobs
 - **Redis**: Fast DB to establish communication between FastAPI and microservices such as Go+Gin
 - **Docker**: Deployment and Infrastructure setup
