@@ -6,7 +6,7 @@ services:
     # build: ./frontend
     command: npm run dev
     volumes:
-      - ./frontend:/app  # Python needs source files
+      - ./next-frontend:/app  # Python needs source files
     ports:
       - "3000:3000"
     environment:
