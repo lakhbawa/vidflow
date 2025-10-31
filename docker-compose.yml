@@ -6,7 +6,7 @@ services:
     # build: ./frontend
     command: npm run dev
     volumes:
-      - ./next-frontend:/app  # Python needs source files
+      - ./next-frontend:/app
     ports:
       - "3000:3000"
     environment:
@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./python-api:/usr/src/app  # Python needs source files
+      - ./python-api:/usr/src/app
     depends_on:
       - redis
       - db
@@ -37,7 +37,6 @@ services:
     volumes:
     - ./go-worker:/app
     command: go run main.go
-    # Remove the volumes line - Go binary is self-contained!
     depends_on:
       - redis
       - db
