@@ -1,0 +1,68 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks: [vidnet]
+
+  api:
+    build: ./python-api
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./python-api:/usr/src/app
+    depends_on:
+      - redis
+      - db
+    networks: [vidnet]
+
+  worker:
+    build: ./go-worker
+    env_file: .env
+    volumes:
+      - ./go-worker:/app
+    depends_on:
+      - redis
+      - db
+    networks: [vidnet]
+
+  redis:
+    image: redis:7
+    networks: [vidnet]
+    volumes:
+      - redisdata:/data
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vidflow
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks: [vidnet]
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+          - ./:/var/www
+          - ./docker/config/nginx/conf.d.local/:/etc/nginx/conf.d/
+          - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
+    depends_on:
+      - frontend
+    networks: [vidnet]
+
+volumes:
+  db_data:
+  redisdata:
+    driver: local
+
+networks:
+  vidnet:
+    driver: bridge
