@@ -35,9 +35,9 @@
     - user_id
     - status
 ## Task Pipeline
-[*] Setup Environment for everything
-[] Create homepage with simple form for mp4 to mp3 conversion
-[] Create API endpoint that takes the user input and media and persists in db and local storage
+- Setup Environment for everything
+- Create homepage with simple form for mp4 to mp3 conversion
+- Create API endpoint that takes the user input and media and persists in db and local storage
 
 
 ## Note:
