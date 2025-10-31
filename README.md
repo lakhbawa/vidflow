@@ -5,7 +5,7 @@
     - Autosize video to 9:16 or 1:1 for social media
     - Video Resolution Resize (Mp4)
 
-Tech Stack:
+## Tech Stack:
 - Typescript + NextJs + React + JavaScript - For User friendly UI
 - Python + FastAPI - API for handling the requests and responses
 - Go + Gin - Efficient handling of CPU intensive Video Conversion jobs
