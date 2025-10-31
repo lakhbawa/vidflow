@@ -1,5 +1,5 @@
 # Overview
-- Vid is online platform for media conversion
+- Vidflow is online platform for media conversion
 - It has following features
     - Extract mp3 from mp4
     - Autosize video to 9:16 or 1:1 for social media
@@ -13,3 +13,6 @@ Tech Stack:
 - Docker - Deployment and Infrastructure setup
 - FFMPEG - Media Conversion
 - HTML/CSS/Tailwind - Frontend of Application
+
+## Note:
+This project is built to showcase my proficiency in Python, Django, and React, highlighting how these technologies can be integrated to create a full-stack web application.
