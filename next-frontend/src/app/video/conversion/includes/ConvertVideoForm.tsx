@@ -13,7 +13,9 @@ export default function ConvertVideoForm() {
     target_format: "mp3",
   });
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+function handleInputChange(
+  event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+) {
     handleFormInputChangeHelper(event, setFormData);
   }
 
