@@ -1,5 +1,20 @@
 FROM golang:1.22-alpine
+
 WORKDIR /app
-COPY go.mod ./
+
+# Install system dependencies (if needed for video processing)
+RUN apk add --no-cache \
+    ffmpeg \
+    gcc \
+    musl-dev
+
+# Copy go module files
+COPY go.mod go.sum ./
+
+# Download dependencies
 RUN go mod download
+
+# Copy source code
+COPY . .
+
 CMD ["go", "run", "main.go"]
