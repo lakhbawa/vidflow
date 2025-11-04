@@ -63,6 +63,25 @@ services:
       - db_data:/var/lib/postgresql/data
     networks: [vidnet]
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks: [vidnet]
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks: [vidnet]
   nginx:
     image: nginx:latest
     ports:
@@ -78,6 +97,8 @@ services:
 volumes:
   db_data:
   redisdata:
+    driver: local
+  pgadmin_data:
     driver: local
 
 networks:
