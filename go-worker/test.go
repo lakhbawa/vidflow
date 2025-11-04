@@ -1,15 +1,17 @@
 package main
-import ("fmt")
 
+import (
+	"fmt"
+)
 
-func main() {
+func runTest() {
 	dataChan := make(chan int)
 
-	go func () {
+	go func() {
 		dataChan <- 1
 	}()
 	// dataChan <- 1
 
-	n := <- dataChan
+	n := <-dataChan
 	fmt.Println(n)
 }
