@@ -5,4 +5,4 @@ shellapi:
 	docker compose exec api bash
 
 shellworker:
-	docker compose exec worker bash
+	docker compose exec worker /bin/sh
