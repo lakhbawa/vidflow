@@ -1,10 +1,18 @@
+from datetime import datetime
 from pathlib import Path
 import shutil
+import subprocess
 from typing import Union
 import uuid
 import redis
+import app.services.video_conversion as videoConversionService
+from app.validation.conversion_object import ConversionObject
+from app.database import Base, engine, get_db
+from fastapi import Depends, FastAPI, APIRouter, Form, File, UploadFile
+from app.models.conversion import Conversion
 
-from fastapi import FastAPI, APIRouter, Form, File, UploadFile
+Base.metadata.create_all(bind=engine)
+
 
 router = APIRouter(prefix="/api")
 r = redis.Redis(host='redis', port=6379)
@@ -26,9 +34,19 @@ def read_root():
     return {"Hello": "World2"}
 
 @router.get("/redis-producer-test")
-def redis_test():
-    entry_id = r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
-    print(f"Added entry with ID: {entry_id}")
+def redis_test(db=Depends(get_db)):
+    
+    conversion_id = '12'
+    from_format='mp4',
+    to_format='mp3',
+    original_path="placeholder"
+    
+    convert = videoConversionService.create_conversion(db, from_format=from_format, to_format=to_format, original_path=original_path)
+    
+    convert_ob = ConversionObject(conversion_id=convert.id, created_at=convert.created_at)
+    entry_id = videoConversionService.queue_conversion_job(r, STREAM_NAME, convert_ob)
+    # entry_id = r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
+    # print(f"Added entry with ID: {entry_id}")
     return {
         "entry_id": entry_id
     }
@@ -76,6 +94,37 @@ def convert_video(target_format: str = Form(), file: UploadFile = File()):
     with file_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    converted_file_name = f"{original_name}-{random_suffix}-converted.mp3"
+    converted_file_path = upload_dir / converted_file_name
+    
+    # def convert_to_mp3(input_path, output_path):
+    #     cmd = [
+    #         "ffmpeg",
+    #         "-i", input_path,
+    #         "-vn",
+    #         "-acodec", "libmp3lame",
+    #         "-b:a", "192k",
+    #         output_path
+    #     ]
+
+    #     subprocess.run(cmd, check=True)
+
+    # convert_to_mp3(file_path, converted_file_path)
+
+    # print(result.stdout)  # ffmpeg logs usually go to stderr though
+    # print(result.stderr)
+    
+    conversion = Conversion()
+    conversion_id = 12
+    conversion_ob = videoConversionService.ConversionObject({
+        conversion_id: conversion_id,
+        created_at: datetime.now()
+    })
+    
+    convert_video.queue_conversion_job(conversion_ob)
+    def add_conversion_job():
+        return r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
+    
     return {
         "target_format": target_format,
         "file_name": stored_file_name,
