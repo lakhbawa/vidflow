@@ -39,6 +39,10 @@
 - Create homepage with simple form for mp4 to mp3 conversion
 - Create API endpoint that takes the user input and media and persists in db and local storage
 
+## Screenshots:
 
+![Homepage](https://raw.githubusercontent.com/lakhbawa/vidflow/refs/heads/main/screenshots/Converted-video-download-screen.png)
+![Homepage](https://raw.githubusercontent.com/lakhbawa/vidflow/refs/heads/main/screenshots/video-conversion-form.png)
+![Homepage](https://raw.githubusercontent.com/lakhbawa/vidflow/refs/heads/main/screenshots/vidflow-homepage.png)
 ## Note:
 This project is built to showcase my proficiency in Python, Go, FastAPI , Gin, React and NextJs, highlighting how these technologies can be integrated to create a full-stack web application.
