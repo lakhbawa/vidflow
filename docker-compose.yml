@@ -39,7 +39,8 @@ services:
     env_file: .env
     volumes:
     - ./go-worker:/app
-    command: go run main.go
+    - ./media:/app/media
+    command: go run cmd/api/main.go
     depends_on:
       - redis
       - db
@@ -90,6 +91,7 @@ services:
       - ./:/var/www
       - ./docker/config/nginx/conf.d.local/:/etc/nginx/conf.d/
       - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
+      - ./media:/var/www/media
     depends_on:
       - frontend
     networks: [vidnet]
