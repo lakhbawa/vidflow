@@ -37,14 +37,18 @@ export default function ConversionStatus({ params }: { params: Promise<{ convers
   if (!conversionData) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h2>Video Conversion Status</h2>
+    <div className="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg shadow-md " >
+      <h2 className="font-semibold">Video Conversion Status</h2>
       <p>Status: {conversionData.status}</p>
       <p>Original file: {conversionData.original_path}</p>
+        {conversionData.status === "PENDING" && (
+        <h2> Video Conversion in progress, Please wait </h2>
+
+        )}
       {conversionData.status === "completed" && conversionData.final_path && (
         <p>
           Download:{" "}
-          <a href={`/static/${conversionData.final_path}`} download>
+          <a className="text-blue text-gray-800 bg-blue-300" href={`/static/${conversionData.final_path}`} download>
             {conversionData.final_path}
           </a>
         </p>

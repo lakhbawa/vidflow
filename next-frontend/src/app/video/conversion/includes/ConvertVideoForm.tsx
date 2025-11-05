@@ -72,8 +72,6 @@ function handleInputChange(
           onClick={submitForm}
         ></input>
       </form>
-
-        Conversion Status: {conversionId}
     </>
   );
 }
