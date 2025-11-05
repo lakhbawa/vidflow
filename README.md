@@ -41,8 +41,8 @@
 
 ## Screenshots:
 
-![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screenshots/Converted-video-download-screen.png)
-![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screenshots/video-conversion-form.png)
-![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screenshots/vidflow-homepage.png)
+![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/Converted-video-download-screen.png)
+![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/video-conversion-form.png)
+![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/vidflow-homepage.png)
 ## Note:
 This project is built to showcase my proficiency in Python, Go, FastAPI , Gin, React and NextJs, highlighting how these technologies can be integrated to create a full-stack web application.
