@@ -21,13 +21,13 @@
 ## Screenshots:
 
 ### Homepage
-![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/vidflow-homepage.png)
+![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screencapture-localhost-2025-11-05-15_41_49.png)
 
 ### Conversion Form
-![Conversion Form](https://github.com/lakhbawa/vidflow/blob/main/screenshots/video-conversion-form.png)
+![Conversion Form](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screencapture-localhost-video-conversion-2025-11-05-15_42_13.png)
 
 ### Conversion Download
-![Conversion Download](https://github.com/lakhbawa/vidflow/blob/main/screenshots/Converted-video-download-screen.png)
+![Conversion Download](https://github.com/lakhbawa/vidflow/blob/main/screenshots/screencapture-localhost-video-status-be99864e-c0a8-4660-9d90-f3ed589de8ea-2025-11-05-15_42_26.png)
 
 ## Setup Instructions:
 - Clone the repo
