@@ -1,11 +1,13 @@
 import uuid
+
 from app.database import Base
 from sqlalchemy import Column, String, TIMESTAMP, text
 from sqlalchemy.dialects.postgresql import UUID
 
+
 class Conversion(Base):
     __tablename__ = "conversions"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     from_format = Column(String, nullable=False)
     to_format = Column(String, nullable=False)
