@@ -40,9 +40,14 @@
 - Create API endpoint that takes the user input and media and persists in db and local storage
 
 ## Screenshots:
+
+### Homepage
 ![Homepage](https://github.com/lakhbawa/vidflow/blob/main/screenshots/vidflow-homepage.png)
+
+### Conversion Form
 ![Conversion Form](https://github.com/lakhbawa/vidflow/blob/main/screenshots/video-conversion-form.png)
 
+### Conversion Download
 ![Conversion Download](https://github.com/lakhbawa/vidflow/blob/main/screenshots/Converted-video-download-screen.png)
 
 ## Setup Instructions:
