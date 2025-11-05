@@ -10,7 +10,6 @@ from app.validation.conversion_object import ConversionObject
 from app.database import Base, engine, get_db
 from fastapi import Depends, FastAPI, APIRouter, Form, File, UploadFile
 from app.models.conversion import Conversion
-
 Base.metadata.create_all(bind=engine)
 
 
@@ -33,23 +32,23 @@ except redis.exceptions.ResponseError as e:
 def read_root():
     return {"Hello": "World2"}
 
-@router.get("/redis-producer-test")
-def redis_test(db=Depends(get_db)):
-    
-    conversion_id = '12'
-    from_format='mp4',
-    to_format='mp3',
-    original_path="placeholder"
-    
-    convert = videoConversionService.create_conversion(db, from_format=from_format, to_format=to_format, original_path=original_path)
-    
-    convert_ob = ConversionObject(conversion_id=convert.id, created_at=convert.created_at)
-    entry_id = videoConversionService.queue_conversion_job(r, STREAM_NAME, convert_ob)
-    # entry_id = r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
-    # print(f"Added entry with ID: {entry_id}")
-    return {
-        "entry_id": entry_id
-    }
+# @router.get("/redis-producer-test")
+# def redis_test(db=Depends(get_db)):
+#
+#     conversion_id = '12'
+#     from_format='mp4',
+#     to_format='mp3',
+#     original_path="placeholder"
+#
+#     convert = videoConversionService.create_conversion(db, from_format=from_format, to_format=to_format, original_path=original_path)
+#
+#     convert_ob = ConversionObject(conversion_id=convert.id, file_path:'', created_at=convert.created_at)
+#     entry_id = videoConversionService.queue_conversion_job(r, STREAM_NAME, convert_ob)
+#     # entry_id = r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
+#     # print(f"Added entry with ID: {entry_id}")
+#     return {
+#         "entry_id": entry_id
+#     }
 @router.get('/redis-consumer-test')
 def redis_consumer():
     try:
@@ -80,7 +79,7 @@ def redis_consumer():
         return {"error": str(e)}
 
 @router.post("/video/convert")
-def convert_video(target_format: str = Form(), file: UploadFile = File()):
+def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Depends(get_db)):
     upload_dir = Path("/usr/src/app/media")
     upload_dir.mkdir(parents=True, exist_ok=True)
 
@@ -89,9 +88,9 @@ def convert_video(target_format: str = Form(), file: UploadFile = File()):
     random_suffix = uuid.uuid4().hex[:8]
     
     stored_file_name = f"{original_name}-{random_suffix}{ext}"
-    file_path = upload_dir / stored_file_name
+    original_path = upload_dir / stored_file_name
 
-    with file_path.open("wb") as buffer:
+    with original_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     converted_file_name = f"{original_name}-{random_suffix}-converted.mp3"
@@ -113,22 +112,20 @@ def convert_video(target_format: str = Form(), file: UploadFile = File()):
 
     # print(result.stdout)  # ffmpeg logs usually go to stderr though
     # print(result.stderr)
-    
-    conversion = Conversion()
-    conversion_id = 12
-    conversion_ob = videoConversionService.ConversionObject({
-        conversion_id: conversion_id,
-        created_at: datetime.now()
-    })
-    
-    convert_video.queue_conversion_job(conversion_ob)
-    def add_conversion_job():
-        return r.xadd(STREAM_NAME, {'conversion_id': 1, 'file_path': '__file__'})
+
+    from_format='mp4',
+    to_format='mp3',
+
+    create_conversion_record = videoConversionService.create_conversion(db, from_format=from_format, to_format=to_format, original_path=stored_file_name)
+
+    convert_ob = ConversionObject(conversion_id=create_conversion_record.id, original_path=stored_file_name, final_path=converted_file_name, created_at=create_conversion_record.created_at)
+    entry_id = videoConversionService.queue_conversion_job(r, STREAM_NAME, convert_ob)
+
     
     return {
         "target_format": target_format,
         "file_name": stored_file_name,
-        "saved_to": str(file_path.resolve()),
+        "saved_to": str(original_path.resolve()),
     }
     
 
