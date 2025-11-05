@@ -26,9 +26,7 @@ func gracefulShutdown(apiServer *http.Server, db database.Service, done chan boo
 	fmt.Println("Worker is running. Press Ctrl+C to stop.")
 
 	<-ctx.Done()
-	// Listen for the interrupt signal.
-	<-ctx.Done()
-
+	
 	log.Println("shutting down gracefully, press Ctrl+C again to force")
 	stop() // Allow Ctrl+C to force shutdown
 
