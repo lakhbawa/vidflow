@@ -15,25 +15,6 @@
 - **FFMPEG**: Media Conversion
 - **HTML/CSS/Tailwind**: Frontend of Application
 
-## API Paths
-- POST /api/conversion/:action{mp4tomp3,resize}
-- GET /api/conversion/:conversion_id/download
-- DELETE /api/conversion/:conversion_id
-## Frontend Paths
-- / - Homepage with Tabbed Form which shows fields for different kind of conversions
-
-## Tables
-- **users**
-    - uuid
-    - name: nullable
-- **conversions**
-    - uuid
-    - from_format
-    - to_format
-    - original_path: string
-    - final_path: string
-    - user_id
-    - status
 
 ## Screenshots:
 
