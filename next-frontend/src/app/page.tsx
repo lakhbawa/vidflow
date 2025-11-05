@@ -155,7 +155,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">MP4 to MP3 Conversion</h3>
+                  <h3 className="text-lg font-semibold mb-2">MP4, MOV, AVI, MKV to MP3 Conversion</h3>
                   <p className="text-gray-400 text-sm">Extract high-quality audio from video files up to 100MB. Professional-grade 320kbps output.</p>
                 </div>
               </div>
