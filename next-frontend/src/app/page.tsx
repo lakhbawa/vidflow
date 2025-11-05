@@ -39,7 +39,7 @@ export default function Home() {
 
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
             A full-stack video conversion platform showcasing modern microservices architecture.
-            Extract MP3 from MP4 files with blazing-fast performance.
+            Extract MP3 from MP4 or any other video format with blazing-fast performance.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
