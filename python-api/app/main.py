@@ -123,6 +123,7 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
 
     
     return {
+        "conversion_id": create_conversion_record.id,
         "target_format": target_format,
         "file_name": stored_file_name,
         "saved_to": str(original_path.resolve()),

@@ -5,9 +5,12 @@ import {
 } from "@/lib/helpers";
 import axios from "axios";
 import { FormEvent, useState } from "react";
-
+import { useRouter } from 'next/navigation';
 export default function ConvertVideoForm() {
   console.log("loaded");
+  const router = useRouter();
+
+  const [conversionId, setConversionId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     file: null,
     target_format: "mp3",
@@ -22,20 +25,22 @@ function handleInputChange(
   async function submitForm(event: FormEvent) {
     event.preventDefault();
 
-    console.log("form submission: ", convertJsonToFormData(formData));
+    try {
+      const res = await axios.post(
+        "/api/video/convert",
+        convertJsonToFormData(formData),
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
-    const res = await axios
-      .post("/api/video/convert", convertJsonToFormData(formData), {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      setConversionId(res.data.conversion_id);
+
+      router.push(`/video/status/${res.data.conversion_id}`);
+
+    } catch (err) {
+      console.error(err);
+    }
   }
   return (
     <>
@@ -67,6 +72,8 @@ function handleInputChange(
           onClick={submitForm}
         ></input>
       </form>
+
+        Conversion Status: {conversionId}
     </>
   );
 }
