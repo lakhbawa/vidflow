@@ -127,7 +127,11 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
         "file_name": stored_file_name,
         "saved_to": str(original_path.resolve()),
     }
-    
+
+@router.get("/conversion-status/{conversion_id}")
+def get_conversion_data(conversion_id: uuid.UUID, db=Depends(get_db)):
+    convertion = videoConversionService.get_conversion_status(db=db, conversion_id=str(conversion_id))
+    return convertion
 
 @router.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
