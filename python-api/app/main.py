@@ -1,17 +1,16 @@
-from datetime import datetime
-from pathlib import Path
 import shutil
-import subprocess
-from typing import Union
 import uuid
-import redis
-import app.services.video_conversion as videoConversionService
-from app.validation.conversion_object import ConversionObject
-from app.database import Base, engine, get_db
-from fastapi import Depends, FastAPI, APIRouter, Form, File, UploadFile
-from app.models.conversion import Conversion
-Base.metadata.create_all(bind=engine)
+from pathlib import Path
+from typing import Union
 
+import app.services.video_conversion as videoConversionService
+import redis
+from app.database import Base, engine, get_db
+from app.models.conversion import Conversion
+from app.validation.conversion_object import ConversionObject
+from fastapi import Depends, FastAPI, APIRouter, Form, File, UploadFile
+
+Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/api")
 r = redis.Redis(host='redis', port=6379)
@@ -28,9 +27,11 @@ except redis.exceptions.ResponseError as e:
     if "BUSYGROUP" not in str(e):
         raise e
 
+
 @router.get("/")
 def read_root():
     return {"Hello": "World2"}
+
 
 # @router.get("/redis-producer-test")
 # def redis_test(db=Depends(get_db)):
@@ -55,7 +56,7 @@ def redis_consumer():
         messages = r.xreadgroup(
             groupname=GROUP_NAME,
             consumername=CONSUMER_NAME,
-            streams={STREAM_NAME: ">"}, # message not processed
+            streams={STREAM_NAME: ">"},  # message not processed
             count=10,
             block=5000  # wait 5 seconds
         )
@@ -78,6 +79,7 @@ def redis_consumer():
     except Exception as e:
         return {"error": str(e)}
 
+
 @router.post("/video/convert")
 def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Depends(get_db)):
     upload_dir = Path("/usr/src/app/media")
@@ -86,7 +88,7 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
     original_name = Path(file.filename).stem
     ext = Path(file.filename).suffix.lower()
     random_suffix = uuid.uuid4().hex[:8]
-    
+
     stored_file_name = f"{original_name}-{random_suffix}{ext}"
     original_path = upload_dir / stored_file_name
 
@@ -95,7 +97,7 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
 
     converted_file_name = f"{original_name}-{random_suffix}-converted.mp3"
     converted_file_path = upload_dir / converted_file_name
-    
+
     # def convert_to_mp3(input_path, output_path):
     #     cmd = [
     #         "ffmpeg",
@@ -113,15 +115,17 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
     # print(result.stdout)  # ffmpeg logs usually go to stderr though
     # print(result.stderr)
 
-    from_format='mp4',
-    to_format='mp3',
+    from_format = 'mp4',
+    to_format = 'mp3',
 
-    create_conversion_record = videoConversionService.create_conversion(db, from_format=from_format, to_format=to_format, original_path=stored_file_name)
+    create_conversion_record = videoConversionService.create_conversion(db, from_format=from_format,
+                                                                        to_format=to_format,
+                                                                        original_path=stored_file_name)
 
-    convert_ob = ConversionObject(conversion_id=create_conversion_record.id, original_path=stored_file_name, final_path=converted_file_name, created_at=create_conversion_record.created_at)
+    convert_ob = ConversionObject(conversion_id=create_conversion_record.id, original_path=stored_file_name,
+                                  final_path=converted_file_name, created_at=create_conversion_record.created_at)
     entry_id = videoConversionService.queue_conversion_job(r, STREAM_NAME, convert_ob)
 
-    
     return {
         "conversion_id": create_conversion_record.id,
         "target_format": target_format,
@@ -129,14 +133,17 @@ def convert_video(target_format: str = Form(), file: UploadFile = File(), db=Dep
         "saved_to": str(original_path.resolve()),
     }
 
+
 @router.get("/conversion-status/{conversion_id}")
 def get_conversion_data(conversion_id: uuid.UUID, db=Depends(get_db)):
     convertion = videoConversionService.get_conversion_status(db=db, conversion_id=str(conversion_id))
     return convertion
 
+
 @router.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
+
 
 app = FastAPI()
 app.include_router(router)
