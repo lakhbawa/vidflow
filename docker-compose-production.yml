@@ -33,7 +33,7 @@ services:
   vidflow-worker:
     build:
       context: ./go-worker
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     env_file: .env
     volumes:
     # - ./go-worker:/app
