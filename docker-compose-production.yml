@@ -1,16 +1,12 @@
 version: "3.9"
 services:
   vidflow-frontend:
-    image: node:20-alpine
-    working_dir: /app
+    build: ./next-frontend
     # build: ./frontend
-    command: npm install && npm run start
-    volumes:
-      - ./next-frontend:/app
     ports:
       - "4600:3000"
     environment:
-    - NODE_ENV=development
+    - NODE_ENV=production
     - NEXT_PUBLIC_API_URL=http://vidflow-api:4608
     depends_on:
       - vidflow-api
