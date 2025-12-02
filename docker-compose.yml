@@ -38,6 +38,16 @@ services:
       context: ./go-worker
       dockerfile: Dockerfile.dev
     env_file: .env
+    environment:
+      # Explicitly set these to ensure they're available
+      - DATABASE_URL=${DATABASE_URL}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     volumes:
     - ./go-worker:/app
     - ./media:/app/media
