@@ -11,7 +11,7 @@ export default function Home() {
     { name: "Next.js", icon: "▲", color: "text-white" },
     { name: "React", icon: "⚛️", color: "text-blue-300" },
     { name: "PostgreSQL", icon: "🐘", color: "text-blue-500" },
-    { name: "Redis", icon: "📮", color: "text-red-400" },
+    { name: "Redis Streams", icon: "📮", color: "text-red-400" },
     { name: "Docker", icon: "🐳", color: "text-blue-400" },
     { name: "FFmpeg", icon: "🎬", color: "text-green-500" },
   ];
