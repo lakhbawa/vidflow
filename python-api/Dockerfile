@@ -1,28 +1,30 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_NO_CACHE_DIR=1
 
-# Create virtual environment
-RUN python3 -m venv /venv
-ENV PATH="/venv/bin:$PATH"
-
 WORKDIR /usr/src/app
 
-# ✅ Install system dependencies in a single layer
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    gcc \
-    ffmpeg \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+        ffmpeg \
+        build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 4608
 
-CMD ["gunicorn", "app.main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "120"]
+# Use gunicorn with uvicorn workers (production-ready)
+CMD ["gunicorn", "app.main:app", \
+     "-k", "uvicorn.workers.UvicornWorker", \
+     "--bind", "0.0.0.0:4608", \
+     "--timeout", "300", \
+     "--workers", "2", \
+     "--worker-class", "uvicorn.workers.UvicornWorker"]
