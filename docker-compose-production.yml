@@ -92,6 +92,9 @@ services:
       - "traefik.http.routers.vidflow-lakhveerbawa-com.service=vidflow-lakhveerbawa-com"
       # Service
       - "traefik.http.services.vidflow-lakhveerbawa-com.loadbalancer.server.port=80"
+      # Add buffering settings for Traefik
+      - "traefik.http.middlewares.vidflow-buffering.buffering.maxRequestBodyBytes=1073741824"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.middlewares=vidflow-buffering"
     depends_on:
       - vidflow-frontend
     networks:
