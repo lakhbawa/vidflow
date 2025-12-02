@@ -1,0 +1,7 @@
+# Create this file: .dockerignore
+.git
+.air.toml
+tmp/
+*.md
+.env
+.gitignore
