@@ -4,7 +4,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     # build: ./frontend
-    command: npm run start
+    command: npm install && npm run start
     volumes:
       - ./next-frontend:/app
     ports:
