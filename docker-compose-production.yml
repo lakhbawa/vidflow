@@ -110,3 +110,5 @@ volumes:
 networks:
   vidflow-network:
     driver: bridge
+  web:
+    external: true  # Created by Traefik
