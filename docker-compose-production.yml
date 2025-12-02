@@ -1,0 +1,112 @@
+version: "3.9"
+services:
+  vidflow-frontend:
+    image: node:20-alpine
+    working_dir: /app
+    # build: ./frontend
+    command: npm run dev
+    volumes:
+      - ./next-frontend:/app
+    ports:
+      - "4600:3000"
+    environment:
+    - NODE_ENV=development
+    - NEXT_PUBLIC_API_URL=http://vidflow-api:4608
+    depends_on:
+      - vidflow-api
+    networks: [vidflow-network]
+
+  vidflow-api:
+    build:
+          context: ./python-api
+          dockerfile: Dockerfile
+    env_file: .env
+    command: uvicorn app.main:app --host 0.0.0.0 --port 4608 --reload
+    ports:
+      - "4608:4608"
+    expose:
+      - 4608
+    volumes:
+      - ./python-api:/usr/src/app
+      - ./media:/usr/src/app/media
+    depends_on:
+      - vidflow-redis
+      - vidflow-db
+    networks: [vidflow-network]
+
+  vidflow-worker:
+    build:
+      context: ./go-worker
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    volumes:
+    - ./go-worker:/app
+    - ./.env:/app/.env
+    - ./media:/app/media
+    command: go run cmd/api/main.go
+    depends_on:
+      - vidflow-redis
+      - vidflow-db
+    networks: [vidflow-network]
+
+  vidflow-redis:
+    image: redis:7
+    networks: [vidflow-network]
+    volumes:
+      - redisdata:/data
+    ports:
+      - 4679:6379
+
+  vidflow-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE:-vidflow}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 4632:5432
+    networks: [vidflow-network]
+
+#  vidflow-adminer: - uncomment if you want adminer
+#    image: adminer:latest
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - vidflow-db
+#    networks: [vidflow-network]
+
+  vidflow-nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - ./:/var/www
+      - ./media:/var/www/media
+      - ./docker/config/nginx/conf.d.production/:/etc/nginx/conf.d/
+    labels:
+      - "traefik.enable=true"
+
+      # Main router (non-www)
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.rule=Host(`vidflow.lakhveerbawa.com`)"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.entrypoints=websecure"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.tls=true"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.service=vidflow-lakhveerbawa-com"
+      # Service
+      - "traefik.http.services.vidflow-lakhveerbawa-com.loadbalancer.server.port=80"
+    depends_on:
+      - vidflow-frontend
+    networks:
+      - vidflow-network
+      - web # traefik network
+
+volumes:
+  db_data:
+  redisdata:
+    driver: local
+
+networks:
+  vidflow-network:
+    driver: bridge
