@@ -19,8 +19,8 @@ FROM debian:bookworm-slim
 # (bookworm-slim has ffmpeg in repos)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg \
-        ca-certificates \
+    ffmpeg \
+    ca-certificates \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -28,7 +28,5 @@ WORKDIR /app
 COPY --from=builder /app/vidflow-worker ./vidflow-worker
 RUN chmod +x vidflow-worker
 
-ENV REDIS_URL=redis:6379
-ENV DATABASE_URL=postgresql://postgres:postgres@db:5432/vidflow
 
 CMD ["./vidflow-worker"]

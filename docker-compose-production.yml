@@ -23,7 +23,7 @@ services:
     expose:
       - 4608
     volumes:
-      - ./python-api:/usr/src/app
+      # - ./python-api:/usr/src/app
       - ./media:/usr/src/app/media
     depends_on:
       - vidflow-redis
@@ -36,7 +36,7 @@ services:
       dockerfile: Dockerfile.dev
     env_file: .env
     volumes:
-    - ./go-worker:/app
+    # - ./go-worker:/app
     - ./.env:/app/.env
     - ./media:/app/media
     command: go run cmd/api/main.go
