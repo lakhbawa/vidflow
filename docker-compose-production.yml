@@ -38,7 +38,7 @@ services:
     volumes:
     # - ./go-worker:/app
     - ./media:/app/media
-    command: go run cmd/api/main.go
+    # command: go run cmd/api/main.go
     depends_on:
       - vidflow-redis
       - vidflow-db
