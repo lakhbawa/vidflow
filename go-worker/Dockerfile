@@ -9,7 +9,7 @@ RUN go mod download
 COPY . .
 
 # Build Go binary (static if you want)
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o vidflow-worker ./main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o vidflow-worker ./cmd/api/main.go
 
 
 # ---------- Stage 2: Runtime ----------
