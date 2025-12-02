@@ -6,3 +6,9 @@ shellapi:
 
 shellworker:
 	docker compose exec worker /bin/sh
+shellfrontend:
+	docker compose exec vidflow-frontend /bin/sh
+shellapi:
+	docker compose exec vidflow-api /bin/sh
+shellworker:
+	docker compose exec vidflow-worker /bin/sh

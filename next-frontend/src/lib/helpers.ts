@@ -7,7 +7,7 @@ import { ChangeEvent } from "react";
  * @param event - the change event from input/select
  * @param setFormData - React state setter function for form data
  */
-export function handleFormInputChangeHelper<T extends Record<string, any>>(
+export function handleFormInputChangeHelper<T extends Record<string, unknown>>(
   event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   setFormData: React.Dispatch<React.SetStateAction<T>>
 ) {
@@ -26,12 +26,12 @@ export function handleFormInputChangeHelper<T extends Record<string, any>>(
   }
 }
 
-export function convertJsonToFormData(data: Record<string, any>): FormData {
+export function convertJsonToFormData(data: Record<string, unknown>): FormData {
   const formData = new FormData();
 
-  const isFile = (val: any): val is File | Blob => val instanceof File || val instanceof Blob;
+  const isFile = (val: unknown): val is File | Blob => val instanceof File || val instanceof Blob;
 
-  const appendFormData = (key: string, value: any): void => {
+  const appendFormData = (key: string, value: unknown): void => {
     if (value === null || value === undefined) return;
 
     // Directly append files
@@ -63,11 +63,11 @@ export function convertJsonToFormData(data: Record<string, any>): FormData {
         } else if (typeof item === 'object' && item !== null) {
           for (const prop in item) {
             if (Object.prototype.hasOwnProperty.call(item, prop)) {
-              appendFormData(`${key}[${index}][${prop}]`, item[prop]);
+              appendFormData(`${key}[${index}][${prop}]`, (item as Record<string, unknown>)[prop]);
             }
           }
         } else {
-          formData.append(`${key}[]`, item);
+          formData.append(`${key}[]`, String(item));
         }
       });
       return;

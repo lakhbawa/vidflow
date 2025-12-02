@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  frontend:
+  vidflow-frontend:
     image: node:20-alpine
     working_dir: /app
     # build: ./frontend
@@ -13,13 +13,14 @@ services:
     - NODE_ENV=development
     - NEXT_PUBLIC_API_URL=http://api:8000
     depends_on:
-      - api
-    networks: [vidnet]
+      - vidflow-api
+    networks: [vidflow-network]
 
-  api:
+  vidflow-api:
+    platform: linux/amd64
     build:
           context: ./python-api
-          dockerfile: Dockerfile
+          dockerfile: Dockerfile.dev
     env_file: .env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
@@ -28,11 +29,11 @@ services:
       - ./python-api:/usr/src/app
       - ./media:/usr/src/app/media
     depends_on:
-      - redis
-      - db
-    networks: [vidnet]
+      - vidflow-redis
+      - vidflow-db
+    networks: [vidflow-network]
 
-  worker:
+  vidflow-worker:
     build:
       context: ./go-worker
       dockerfile: Dockerfile.dev
@@ -42,19 +43,19 @@ services:
     - ./media:/app/media
     command: go run cmd/api/main.go
     depends_on:
-      - redis
-      - db
-    networks: [vidnet]
+      - vidflow-redis
+      - vidflow-db
+    networks: [vidflow-network]
 
-  redis:
+  vidflow-redis:
     image: redis:7
-    networks: [vidnet]
+    networks: [vidflow-network]
     volumes:
       - redisdata:/data
     ports:
       - 6379:6379
 
-  db:
+  vidflow-db:
     image: postgres:16
     environment:
       POSTGRES_USER: postgres
@@ -62,28 +63,16 @@ services:
       POSTGRES_DB: vidflow
     volumes:
       - db_data:/var/lib/postgresql/data
-    networks: [vidnet]
+    networks: [vidflow-network]
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
-    networks: [vidnet]
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-  adminer:
+  vidflow-adminer:
     image: adminer:latest
     ports:
       - "8080:8080"
     depends_on:
-      - db
-    networks: [vidnet]
-  nginx:
+      - vidflow-db
+    networks: [vidflow-network]
+  vidflow-nginx:
     image: nginx:latest
     ports:
       - "80:80"
@@ -93,8 +82,8 @@ services:
       - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
       - ./media:/var/www/media
     depends_on:
-      - frontend
-    networks: [vidnet]
+      - vidflow-frontend
+    networks: [vidflow-network]
 
 volumes:
   db_data:
@@ -104,5 +93,5 @@ volumes:
     driver: local
 
 networks:
-  vidnet:
+  vidflow-network:
     driver: bridge

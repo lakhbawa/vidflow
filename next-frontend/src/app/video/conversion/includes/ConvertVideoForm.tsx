@@ -7,7 +7,7 @@ import {useRouter} from 'next/navigation';
 export default function ConvertVideoForm() {
     const router = useRouter();
 
-    const [conversionId, setConversionId] = useState<string | null>(null);
+    // const [conversionId, setConversionId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [fileName, setFileName] = useState<string>("");
     const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ export default function ConvertVideoForm() {
                 }
             );
 
-            setConversionId(res.data.conversion_id);
+            // setConversionId(res.data.conversion_id);
             router.push(`/video/status/${res.data.conversion_id}`);
 
         } catch (err) {

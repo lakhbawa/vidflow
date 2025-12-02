@@ -3,11 +3,16 @@
 import axios from "axios";
 import {use, useEffect, useState} from "react";
 import Link from "next/link";
+interface ConversionData {
+    status: string;
+    original_path: string;
+    final_path?: string;
+}
 
 export default function ConversionStatus({params}: { params: Promise<{ conversion_id: string }> }) {
     const {conversion_id} = use(params);
 
-    const [conversionData, setConversionData] = useState<any>(null);
+    const [conversionData, setConversionData] = useState<ConversionData | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
