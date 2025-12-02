@@ -1,3 +1,4 @@
+import os
 import shutil
 import uuid
 from pathlib import Path
@@ -9,11 +10,15 @@ from app.database import Base, engine, get_db
 from app.models.conversion import Conversion
 from app.validation.conversion_object import ConversionObject
 from fastapi import Depends, FastAPI, APIRouter, Form, File, UploadFile
+from dotenv import load_dotenv
 
 Base.metadata.create_all(bind=engine)
 
 router = APIRouter(prefix="/api")
-r = redis.Redis(host='redis', port=6379)
+
+REDIS_HOST = os.getenv("REDIS_HOST", "vidflow-redis")
+REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
 
 STREAM_NAME = "conversions"
 GROUP_NAME = "vidflow-workers"
