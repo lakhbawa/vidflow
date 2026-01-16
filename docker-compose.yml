@@ -33,6 +33,22 @@ services:
       - vidflow-db
     networks: [vidflow-network]
 
+  vidflow-tyk:
+    image: tykio/tyk-gateway:v5.3
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docker/config/tyk/tyk.conf:/opt/tyk-gateway/tyk.conf
+      - ./docker/config/tyk/apps:/opt/tyk-gateway/apps
+      - ./docker/config/tyk/policies:/opt/tyk-gateway/policies
+    environment:
+      - TYK_GW_STORAGE_HOST=vidflow-redis
+      - TYK_GW_STORAGE_PORT=6379
+    depends_on:
+      - vidflow-redis
+      - vidflow-api
+    networks: [vidflow-network]
+
   vidflow-worker:
     build:
       context: ./go-worker
@@ -93,6 +109,7 @@ services:
       - ./media:/var/www/media
     depends_on:
       - vidflow-frontend
+      - vidflow-tyk
     networks: [vidflow-network]
 
 volumes:

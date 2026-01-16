@@ -1,0 +1,24 @@
+{
+  "default": {
+    "id": "default",
+    "name": "Default Policy",
+    "rate": 1000,
+    "per": 60,
+    "quota_max": -1,
+    "quota_renewal_rate": 3600,
+    "access_rights": {
+      "python-api-vidflow": {
+        "api_id": "python-api-vidflow",
+        "api_name": "VidFlow Python API",
+        "versions": ["Default"],
+        "allowed_urls": []
+      }
+    },
+    "org_id": "vidflow",
+    "hmac_enabled": false,
+    "active": true,
+    "is_inactive": false,
+    "tags": ["default"],
+    "key_expires_in": 0
+  }
+}
