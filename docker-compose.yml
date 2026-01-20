@@ -1,30 +1,23 @@
-version: "3.9"
 services:
   vidflow-frontend:
     image: node:20-alpine
     working_dir: /app
-    # build: ./frontend
     command: npm run dev
     volumes:
       - ./next-frontend:/app
     ports:
-      - "3000:3000"
+      - "4800:3000"
     environment:
-    - NODE_ENV=development
-    - NEXT_PUBLIC_API_URL=http://api:8000
-    depends_on:
-      - vidflow-api
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:4880
     networks: [vidflow-network]
 
   vidflow-api:
-    platform: linux/amd64
     build:
-          context: ./python-api
-          dockerfile: Dockerfile.dev
+      context: ./python-api
+      dockerfile: Dockerfile.dev
     env_file: .env
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    ports:
-      - "8000:8000"
     volumes:
       - ./python-api:/usr/src/app
       - ./media:/usr/src/app/media
@@ -39,7 +32,6 @@ services:
       dockerfile: Dockerfile.dev
     env_file: .env
     environment:
-      # Explicitly set these to ensure they're available
       - DATABASE_URL=${DATABASE_URL}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -49,58 +41,58 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     volumes:
-    - ./go-worker:/app
-    - ./media:/app/media
+      - ./go-worker:/app
+      - ./media:/app/media
     command: go run cmd/api/main.go
     depends_on:
       - vidflow-redis
       - vidflow-db
     networks: [vidflow-network]
 
-  vidflow-redis:
-    image: redis:7
+  tyk-gateway:
+    image: tykio/tyk-gateway:v5.2
+    ports:
+      - "4880:8080"
+    volumes:
+      - ./docker/tyk/tyk.conf:/opt/tyk-gateway/tyk.conf
+      - ./docker/tyk/apps:/opt/tyk-gateway/apps
+      - ./docker/tyk/policies:/opt/tyk-gateway/policies
+      - ./docker/tyk/middleware:/opt/tyk-gateway/middleware
+    depends_on:
+      - vidflow-redis
     networks: [vidflow-network]
+
+  vidflow-redis:
+    image: redis:7-alpine
+    ports:
+      - "4809:6379"
     volumes:
       - redisdata:/data
-    ports:
-      - 6379:6379
+    networks: [vidflow-network]
 
   vidflow-db:
-    image: postgres:16
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: vidflow
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks: [vidflow-network]
 
   vidflow-adminer:
     image: adminer:latest
     ports:
-      - "8080:8080"
+      - "4881:8080"
     depends_on:
       - vidflow-db
-    networks: [vidflow-network]
-  vidflow-nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./:/var/www
-      - ./docker/config/nginx/conf.d.local/:/etc/nginx/conf.d/
-      - ./docker/config/nginx/conf.d.local/ssl:/etc/nginx/ssl/
-      - ./media:/var/www/media
-    depends_on:
-      - vidflow-frontend
     networks: [vidflow-network]
 
 volumes:
   db_data:
   redisdata:
-    driver: local
-  pgadmin_data:
-    driver: local
 
 networks:
   vidflow-network:

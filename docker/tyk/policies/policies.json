@@ -1,0 +1,15 @@
+{
+  "default": {
+    "id": "default",
+    "name": "Default Policy",
+    "rate": 1000,
+    "per": 1,
+    "quota_max": -1,
+    "quota_renewal_rate": 60,
+    "access_rights": {},
+    "org_id": "vidflow",
+    "hmac_enabled": false,
+    "active": true,
+    "is_inactive": false
+  }
+}

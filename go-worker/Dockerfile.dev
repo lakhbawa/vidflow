@@ -1,13 +1,12 @@
-FROM golang:1.25
+FROM golang:1.25-alpine
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+# Install system dependencies (Alpine uses apk, not apt)
+RUN apk add --no-cache \
     ffmpeg \
     gcc \
-    && rm -rf /var/lib/apt/lists/*
+    musl-dev
 
 # Copy go module files
 COPY go.mod go.sum ./
@@ -17,4 +16,4 @@ RUN go mod download
 # Copy the remaining source code
 COPY . .
 
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "cmd/api/main.go"]
