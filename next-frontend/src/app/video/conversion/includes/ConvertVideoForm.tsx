@@ -40,7 +40,7 @@ export default function ConvertVideoForm() {
 
         try {
             const res = await axios.post(
-                "/api/video/convert",
+                "http://localhost:4880/api/video/convert",
                 convertJsonToFormData(formData),
                 {
                     headers: {"Content-Type": "multipart/form-data"},

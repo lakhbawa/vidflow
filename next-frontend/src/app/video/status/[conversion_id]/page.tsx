@@ -20,7 +20,7 @@ export default function ConversionStatus({params}: { params: Promise<{ conversio
 
         async function fetchConversionData() {
             try {
-                const res = await axios.get(`/api/conversion-status/${conversion_id}`);
+                const res = await axios.get(`http://localhost:4880/api/conversion-status/${conversion_id}`);
                 const data = res.data;
 
                 setConversionData(data);

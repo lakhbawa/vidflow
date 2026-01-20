@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 
 Base.metadata.create_all(bind=engine)
 
-router = APIRouter(prefix="/api")
+router = APIRouter()
 
 REDIS_HOST = os.getenv("REDIS_HOST", "vidflow-redis")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
