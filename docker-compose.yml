@@ -50,9 +50,14 @@ services:
     networks: [vidflow-network]
 
   tyk-gateway:
-    image: tykio/tyk-gateway:v5.2
+    image: tykio/tyk-gateway:v5.6
     ports:
       - "4880:8080"
+    environment:
+      - TYK_GW_STORAGE_HOST=vidflow-redis
+      - TYK_GW_STORAGE_PORT=6379
+      - TYK_GW_SECRET=352d20ee67be67f6340b4c0605b044b7
+      - TYK_GW_LOGLEVEL=info
     volumes:
       - ./docker/tyk/tyk.conf:/opt/tyk-gateway/tyk.conf
       - ./docker/tyk/apps:/opt/tyk-gateway/apps
@@ -60,6 +65,45 @@ services:
       - ./docker/tyk/middleware:/opt/tyk-gateway/middleware
     depends_on:
       - vidflow-redis
+    networks: [vidflow-network]
+
+  tyk-dashboard:
+    image: tykio/tyk-dashboard:v5.6
+    ports:
+      - "4801:3000"
+    environment:
+      - TYK_DB_LISTENPORT=3000
+      - TYK_DB_TYKAPI_HOST=http://tyk-gateway
+      - TYK_DB_TYKAPI_PORT=8080
+      - TYK_DB_REDISHOST=vidflow-redis
+      - TYK_DB_REDISPORT=6379
+      - TYK_DB_STORAGE_MAIN_TYPE=postgres
+      - TYK_DB_STORAGE_MAIN_CONNECTIONSTRING=user=postgres password=postgres host=tyk-postgres port=5432 database=tyk_analytics sslmode=disable
+      - TYK_DB_ADMINSECRET=12345
+      - TYK_DB_NODESECRET=352d20ee67be67f6340b4c0605b044b7
+      - TYK_IB_SESSION_SECRET=changeme123
+    depends_on:
+      tyk-postgres:
+        condition: service_healthy
+      tyk-gateway:
+        condition: service_started
+    networks: [vidflow-network]
+
+  tyk-postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=tyk_analytics
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"  # Different port to avoid conflict with vidflow-db
+    volumes:
+      - tyk-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks: [vidflow-network]
 
   vidflow-redis:
@@ -93,6 +137,7 @@ services:
 volumes:
   db_data:
   redisdata:
+  tyk-postgres-data:
 
 networks:
   vidflow-network:
