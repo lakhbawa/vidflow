@@ -87,7 +87,7 @@ services:
       - "traefik.http.routers.vidflow-lakhveerbawa-com.rule=Host(`vidflow.lakhveerbawa.com`)"
       - "traefik.http.routers.vidflow-lakhveerbawa-com.entrypoints=websecure"
       - "traefik.http.routers.vidflow-lakhveerbawa-com.tls=true"
-      - "traefik.http.routers.vidflow-lakhveerbawa-com.tls.certresolver=lets-encrypt"
+      - "traefik.http.routers.vidflow-lakhveerbawa-com.tls.certresolver=letsencrypt"
       - "traefik.http.routers.vidflow-lakhveerbawa-com.service=vidflow-lakhveerbawa-com"
       # Service
       - "traefik.http.services.vidflow-lakhveerbawa-com.loadbalancer.server.port=80"
